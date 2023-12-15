@@ -1,61 +1,81 @@
-GREEN_CHECK="%{$FG[010]%}✓%{$reset_color%}"
-RED_X="%{$FG[001]%}✘%{$reset_color%}"
+GREEN_CHECK="%{$FG[010]%}✓"
+RED_X="%{$FG[001]%}✘"
+
+right_triangle() {
+  echo $'\ue0b0'
+}
+
+semi_circle_left() {
+  echo $'\ue0b6'
+}
+
+semi_circle_right() {
+  echo $'\ue0b4'
+}
 
 prompt_indicator_raw() {
-  echo $'%B\u276f%b'
+  echo $'%B\ue0cc%b '
 }
 
 prompt_indicator() {
   echo "%(?.%{$FG[010]%}$(prompt_indicator_raw)%{$reset_color%}.%{$FG[001]%}$(prompt_indicator_raw)%{$reset_color%})"
 }
 
-username() {
-  echo "%{$FG[177]%}%n%{$reset_color%}"
+arrow_start() {
+  echo "%{$FG[$ARROW_FG]%}%{$BG[$ARROW_BG]%}%B"
 }
 
-host() {
-  echo "%{$FG[177]%}%m%{$reset_color%}"
+arrow_end() {
+  echo "%b%{$reset_color%}%{$FG[$NEXT_ARROW_FG]%}%{$BG[$NEXT_ARROW_BG]%}$(right_triangle)%{$reset_color%}"
 }
 
-directory() {
-  echo "%{$FG[105]%}%0~%{$reset_color%}"
+circle_start() {
+  echo "%{$reset_color%}%{$FG[$ARROW_BG]%}$(semi_circle_left)%{$FG[$ARROW_FG]%}%{$BG[$ARROW_BG]%}%B"
 }
 
-current_time() {
-  echo "%{$FG[105]%}%*%{$reset_color%}"
-}
-
-return_status() {
-  echo "%(?.${GREEN_CHECK}.${RED_X})"
-}
-
-open_bracket() {
-  echo "%{$FG[008]%}[%{$reset_color%}"
-}
-
-close_bracket() {
-  echo "%{$FG[008]%}]%{$reset_color%}"
-}
-
-at_sign() {
-  echo "%{$FG[008]%}@%{$reset_color%}"
+circle_end() {
+  echo "%b%{$reset_color%}%{$FG[$NEXT_ARROW_FG]%}%{$BG[$NEXT_ARROW_BG]%}$(semi_circle_right)%{$reset_color%}"
 }
 
 precmd_hook() {
   MESO_ONLINE_STATUS=`cat /opt/mesocheck/status.txt`
 
-  MESO_STATUS="%{$FG[196]%}OFFLINE%{$reset_color%}"
+  MESO_STATUS="${RED_X}"
   if [[ "$MESO_ONLINE_STATUS" == "0" ]]; then
-    MESO_STATUS="%{$FG[040]%}ONLINE%{$reset_color%}"
+    MESO_STATUS="${GREEN_CHECK}"
   fi
 }
 
-meso_status() {
-  echo "%{$FG[063]%}Mesocast: %{$reset_color%}${MESO_STATUS}"
+username() {
+  ARROW_FG="183"
+  ARROW_BG="055"
+  NEXT_ARROW_BG="093"
+  NEXT_ARROW_FG="055"
+  echo "$(circle_start) %n $(arrow_end)"
 }
 
-hyphen() {
-  echo "%{$FG[008]%}-%{$reset_color%}"
+current_time() {
+  ARROW_FG="183"
+  ARROW_BG="093"
+  NEXT_ARROW_BG="099"
+  NEXT_ARROW_FG="093"
+  echo "$(arrow_start) %* $(arrow_end)"
+}
+
+meso_status() {
+  ARROW_FG="183"
+  ARROW_BG="099"
+  NEXT_ARROW_BG="105"
+  NEXT_ARROW_FG="099"
+  echo "$(arrow_start) Mesocast${MESO_STATUS} $(arrow_end)"
+}
+
+directory() {
+  ARROW_FG="183"
+  ARROW_BG="105"
+  NEXT_ARROW_BG=""
+  NEXT_ARROW_FG="105"
+  echo "$(arrow_start) %0~ $(circle_end)"
 }
 
 NEWLINE=$'\n'
@@ -64,8 +84,8 @@ autoload -U add-zsh-hook
 add-zsh-hook precmd precmd_hook
 
 # get_prompt_info
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$FG[008]%}[%{$FG[010]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$FG[008]%}] - %{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_PREFIX=""
+ZSH_THEME_GIT_PROMPT_SUFFIX=""
 ZSH_THEME_GIT_PROMPT_DIRTY="${RED_X}"
 ZSH_THEME_GIT_PROMPT_CLEAN="${GREEN_CHECK}"
 
@@ -77,10 +97,10 @@ ZSH_THEME_GIT_PROMPT_RENAMED="%{$FG[blue]%} ➦%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_UNMERGED="%{$FG[magenta]%} ✂%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$FG[white]%} ✱%{$reset_color%}"
 
-PROMPT='%B$(open_bracket)$(username)$(at_sign)$(host)$(close_bracket) $(hyphen) \
-$(open_bracket)$(current_time)$(close_bracket) $(hyphen) \
-$(open_bracket)$(meso_status)$(close_bracket) $(hyphen) \
+PROMPT='%B$(username)\
+$(current_time)\
+$(meso_status)\
+$(directory)\
 $(git_prompt_info)\
-$(open_bracket)$(directory)$(close_bracket)\
 %b${NEWLINE}$(prompt_indicator) '
 RPROMPT='$(git_prompt_status)'
