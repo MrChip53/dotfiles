@@ -100,3 +100,4 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+export PATH="/home/mrchip/emsdk:/home/mrchip/emsdk/upstream/emscripten:/home/mrchip/emsdk/node/16.20.0_64bit/bin:/home/mrchip/.local/bin:/home/mrchip/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/mrchip/.local/share/JetBrains/Toolbox/scripts:/home/mrchip/neovim/bin"
