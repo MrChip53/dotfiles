@@ -38,7 +38,7 @@ circle_end() {
 }
 
 precmd_hook() {
-  MESO_ONLINE_STATUS=`cat /opt/mesocheck/status.txt`
+  MESO_ONLINE_STATUS=`cat /tmp/mesostatus`
 
   MESO_STATUS="${RED_X}"
   if [[ "$MESO_ONLINE_STATUS" == "0" ]]; then
@@ -54,28 +54,28 @@ username() {
   echo "$(circle_start) %n $(arrow_end)"
 }
 
-current_time() {
+meso_status() {
   ARROW_FG="183"
   ARROW_BG="093"
   NEXT_ARROW_BG="099"
   NEXT_ARROW_FG="093"
-  echo "$(arrow_start) %* $(arrow_end)"
-}
-
-meso_status() {
-  ARROW_FG="183"
-  ARROW_BG="099"
-  NEXT_ARROW_BG="105"
-  NEXT_ARROW_FG="099"
   echo "$(arrow_start) Mesocast${MESO_STATUS} $(arrow_end)"
 }
 
 directory() {
   ARROW_FG="183"
+  ARROW_BG="099"
+  NEXT_ARROW_BG=""
+  NEXT_ARROW_FG="099"
+  echo "$(arrow_start) %0~ $(circle_end)"
+}
+
+current_time() {
+  ARROW_FG="183"
   ARROW_BG="105"
   NEXT_ARROW_BG=""
   NEXT_ARROW_FG="105"
-  echo "$(arrow_start) %0~ $(circle_end)"
+  echo "$(arrow_start) %* $(circle_end)"
 }
 
 NEWLINE=$'\n'
@@ -98,7 +98,6 @@ ZSH_THEME_GIT_PROMPT_UNMERGED="%{$FG[magenta]%} ✂%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$FG[white]%} ✱%{$reset_color%}"
 
 PROMPT='%B$(username)\
-$(current_time)\
 $(meso_status)\
 $(directory)\
 $(git_prompt_info)\
