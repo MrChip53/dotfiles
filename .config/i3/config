@@ -211,6 +211,3 @@ bindsym $mod+m move workspace to output left
 # Exec
 exec always nitrogen --restart
 exec_always --no-startup-id "picom"
-
-gaps inner 3px
-gaps outer 3px
